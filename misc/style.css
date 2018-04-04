@@ -1,0 +1,19 @@
+body {
+}
+
+a {
+  color: #00B7FF;
+}
+
+.footer {
+  border-top: 1px solid gray;
+  padding: 50px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.padding-navbar {
+	padding: 0 50px;
+}
