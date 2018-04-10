@@ -13,7 +13,7 @@
               <a class="nav-link" href="score.php">Score</a>
             </li>
           </ul>
-          <?php if ($_COOKIE['connected'] == false) {?>
+          <?php if ($_SESSION['connected'] == false) {?>
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal">
               Login
@@ -22,8 +22,8 @@
               Register              
           </button>
           <?php } else {?>
-            <form>
-              <input type="hidden" name="disconnect" value="0">
+            <form method="post">
+              <input type="hidden" name="disconnect" value="true">
               <button type="submit" class="btn btn-primary" >Disconnect</button>      
             </form>
           <?php }?>

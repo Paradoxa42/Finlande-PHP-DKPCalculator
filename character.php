@@ -1,3 +1,7 @@
+<?php
+// Start the session
+session_start();
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -41,7 +45,7 @@
                 </tr>
             <?php
               }
-              if ($_COOKIE['connected'] == true) {
+              if ($_SESSION['connected'] == true) {
                 ?>
                 <form method="post" action="character.php?id=<?php echo $_GET['id']?>">
                   <tr>

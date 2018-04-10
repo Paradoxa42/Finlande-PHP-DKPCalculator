@@ -1,7 +1,10 @@
 <?php
 class database_manager {
     private $database_link;
-
+    
+    /**
+     * When we instanciate the class we connect to the database
+     */
     function __construct() {
         $connectstr_dbhost = 'localhost'; 
         $connectstr_dbname = 'dkpTable'; 
@@ -15,12 +18,18 @@ if (!$this->database_manager) {
     echo "Debugging error: " . mysqli_connect_error() . PHP_EOL; 
     exit; 
   }   
-    }
+}
 
+    /**
+     * We disconnect from the database when we destroy this class
+     */
     function __destruct() {
         mysqli_close($this->database_manager);
     }
 
+    /**
+     * Get a character score
+     */
     function getCharacterScore($character_id) {
         $activities = $this->getActivityCharacterList($character_id);
         $score['total'] = 0;
@@ -38,6 +47,9 @@ if (!$this->database_manager) {
         return $score;
     }
 
+    /**
+     * Convert sql result to array
+     */
     function result_to_array($results) {
         $items = [];
         while ($item = mysqli_fetch_array($results)) {
@@ -46,6 +58,9 @@ if (!$this->database_manager) {
         return $items;        
     }
 
+    /**
+     * Connect the User with username and password
+     */
     function login($name, $password) {
         $query = "SELECT name, password FROM characters WHERE name LIKE '%".$name."%'";
         $item = mysqli_query($this->database_manager, $query);
