@@ -16,6 +16,6 @@ then setup your apache
 
 Database design provided in the ```sql-diagramme.png```
 
-UI screen shot provided in ```gui-screenshots``` folder
+UI screen shot provided in ```gui-screenshots``` folder. The UI has been powered with bootstrap
 
 This application has been deployed on (https://1106401-php.azurewebsites.net/)
