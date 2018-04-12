@@ -8,10 +8,14 @@ It is designed for a guild to use, each member create a profile and monitor all 
 To create the database you need to run first :
 create_database.sql
 then : 
-create_database.php
+create_database.php or dkpTables.sql
 then setup your apache
 ```
 
+
+
 Database design provided in the ```sql-diagramme.png```
 
-UI screen shot provided in ```gui-screenshots``` folder
+UI screen shot provided in ```gui-screenshots``` folder. The UI has been powered with bootstrap
+
+This application has been deployed on (https://1106401-php.azurewebsites.net/)
