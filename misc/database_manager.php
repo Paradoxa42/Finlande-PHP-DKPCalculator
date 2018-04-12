@@ -1,6 +1,7 @@
 <?php
+
 class database_manager {
-    private $database_link;
+    private $database_manager;
     
     /**
      * When we instanciate the class we connect to the database
@@ -25,6 +26,27 @@ if (!$this->database_manager) {
      */
     function __destruct() {
         mysqli_close($this->database_manager);
+    }
+
+    /**
+     * Prepare SQL statement if fail throw error, if not return mysql results
+     */
+    function perform_query($query) {
+        //If the query is null we throw and exeption
+        if ($query == null) {
+            throw new Exception("Error query null");
+        }
+        $stmt = mysqli_prepare($this->database_manager, $query);
+        if ($stmt) {
+            $stmt->execute();
+            $results = $stmt->get_result();
+            $stmt->free_result();
+            $stmt->close();
+            return $results;
+        }
+        else {
+            throw new Exception(mysqli_error($this->database_manager));
+        }
     }
 
     /**
@@ -58,104 +80,135 @@ if (!$this->database_manager) {
         return $items;        
     }
 
+    function print_error_message($error) {
+        echo $error_msg = "<div class='alert alert-danger'><strong>$error</strong></div>";
+    }
+
     /**
      * Connect the User with username and password
      */
     function login($name, $password) {
         $query = "SELECT name, password FROM characters WHERE name LIKE '%".$name."%'";
-        $item = mysqli_query($this->database_manager, $query);
-        $item = $this->result_to_array($item);
-        if (count($item) == 0) {
-            echo "RIEN";
+        try {
+            $this->perform_query($query);
+            $item = $this->perform_query($query);
+            $item = $this->result_to_array($item);
+            if (count($item) == 0) {
+                return false;
+            }
+            echo $item[0]['name'].$item[0]['password'];
+            return ($item[0]['name'] == $name && password_verify($password,$item[0]['password']));
+        } catch (Exception $ex) {
+            $this->print_error_message("Unable to login");
             return false;
         }
-        echo $item[0]['name'].$item[0]['password'];
-        return ($item[0]['name'] == $name && password_verify($password,$item[0]['password']));
     }
 
     /* Get the list of the characters with their name */
     function getCharacterList() {
-        $items = mysqli_query($this->database_manager, "SELECT id,name from characters");
-        return $this->result_to_array($items);
+        try {
+            $items = $this->perform_query("SELECT id,name from characters");
+            return $this->result_to_array($items);
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to get the characterList");
+            return null;
+        }
     }
 
     /* Get a precise character with his name, his score and his activites */
     function getCharacter($id) {
-        $item = mysqli_query($this->database_manager, "SELECT name from characters WHERE id = ".strval($id));
-        return mysqli_fetch_array($item);
+        try {
+            $item = $this->perform_query("SELECT name from characters WHERE id = ".strval($id));
+            return mysqli_fetch_array($item);    
+        } catch(Exception $ex) {
+            $this->print_error_message("Error in getting Character by ID : ".$id);
+            return null;
+        }
     }
 
     /* Add a character */
     function addCharacter($name, $password) {
         $query = "INSERT INTO characters (id, name, password) VALUES (NULL, '".$name."', '".$password."')";
-        echo $query;
-        $item = mysqli_query($this->database_manager, $query);
-        if (!$item) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
+        try {
+            $item = $this->perform_query("SELECT name from characters WHERE id = ".strval($id));
+            return mysqli_fetch_array($item);    
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to add Character");
+            return null;
         }
     }
 
     /* Delete a character and his activities */
     function deleteCharacter($id) {
-        mysqli_query($this->database_manager, "DELETE FROM characters WHERE characters.id = ".strval($id));
-        mysqli_query($this->database_manager, "DELETE FROM activity WHERE activity.idCharacter = ".strval($id));
+        try {
+            $this->perform_query("DELETE FROM characters WHERE characters.id = ".strval($id));
+            $this->perform_query("DELETE FROM activity WHERE activity.idCharacter = ".strval($id));    
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to delete Character");
+        }
     }
 
     /* Get the list of the activities */
     function getActivityList() {
-        $items = mysqli_query($this->database_manager, "SELECT * from activityModel");
-        if (!$items) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
+        try {
+            $items = $this->perform_query("SELECT * from activityModel");
+            return $this->result_to_array($items);
+        } catch (Exception $ex) {
+            $this->print_error_message("Unable to Getting Activity List");
+            return null;
         }
-        return $this->result_to_array($items);
     }
 
     /* Add an activity */
     function addActivity($name, $earning) {
-        $query = "INSERT INTO activityModel (id, name, dkpEarn) VALUES (NULL, '" . strval($name)."', '".strval($earning)."')";
-        $items = mysqli_query($this->database_manager, $query);
-        if (!$items) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
+        try {
+            $query = "INSERT INTO activityModel (id, name, dkpEarn) VALUES (NULL, '" . strval($name)."', '".strval($earning)."')";
+            $items = $this->perform_query($query);
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to Add Activity");
         }
     }
 
     /* Delete an activity and all activities that characters have done */
     function deleteActivity($id) {
-        $item = mysqli_query($this->database_manager, "DELETE FROM activityModel WHERE activityModel.id = " . strval($id));
-        if (!$item) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
-            return false;
-        }
-        $item = mysqli_query($this->database_manager, "DELETE FROM activity WHERE activity.idActivity = " . strval($id));
-        if (!$item) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
-            return false;
-        }
-        return true;
+        try {
+            $item = $this->perform_query("DELETE FROM activityModel WHERE activityModel.id = " . strval($id));
+            $item = $this->perform_query("DELETE FROM activity WHERE activity.idActivity = " . strval($id));
+            return true;    
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to Delete activity");
+        } 
     }
     
     /* Get all activites that a character has done */
     function getActivityCharacterList($id_character) {
-        $query = "SELECT activity.id, activityModel.name, activityModel.dkpEarn, activity.dateTime from activity, activityModel WHERE activity.idCharacter = " . strval($id_character)." AND activity.idActivity = activityModel.id";
-        $item = mysqli_query($this->database_manager, $query);
-        return $this->result_to_array($item);
+        try {
+            $query = "SELECT activity.id, activityModel.name, activityModel.dkpEarn, activity.dateTime from activity, activityModel WHERE activity.idCharacter = " . strval($id_character)." AND activity.idActivity = activityModel.id";
+            $item = $this->perform_query($query);
+            return $this->result_to_array($item);
+        } catch(Exception $ex) {
+            $this->print_error_message("Unable to Get activities of a character");
+            return null;
+        }
     }
 
     /* Add an activity to a character */
     function addCharacterActivity($id_character, $id_activity) {
-        $now = new DateTime();
-        $query = "INSERT INTO activity (id, idCharacter, idActivity, dateTime) VALUES (NULL, '" . strval($id_character) . "', '" . strval($id_activity) . "', '" . $now->format("Y-m-d") . "');";
-        $item = mysqli_query($this->database_manager, $query);
-        if (!$item) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
+        try {
+            $now = new DateTime();
+            $query = "INSERT INTO activity (id, idCharacter, idActivity, dateTime) VALUES (NULL, '" . strval($id_character) . "', '" . strval($id_activity) . "', '" . $now->format("Y-m-d") . "');";
+            $item = $this->perform_query($query);    
+        } catch (Exception $ex) {
+            $this->print_error_message("Unable to add activity to character");
         }
     }
 
     /* Delete the activity of a character */
     function deleteCharacterActivity($id) {
-        $item = mysqli_query($this->database_manager, "DELETE FROM activity WHERE activity.id = " . strval($id));
-        if (!$item) {
-            echo "Error mysql ".mysqli_error($this->database_manager);
+        try {
+            $item = $this->perform_query("DELETE FROM activity WHERE activity.id = " . strval($id));    
+        } catch (Exception $ex) {
+            $this->print_error_message("Unable to delete activity to character");
         }
     }
 }

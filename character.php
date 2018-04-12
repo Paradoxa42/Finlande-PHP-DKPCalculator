@@ -9,6 +9,7 @@ session_start();
     <?php include('./misc/head.php');?>
   </head>
   <body>
+    <?php include('./misc/validanitizor.php')?>
     <?php include('./misc/database_manager.php')?>
     <?php include('./misc/characterAction.php')?>
     <?php include('./misc/user.php')?>

@@ -29,6 +29,11 @@
           <?php }?>
         </div>
 </nav>
+<?php if ($_SESSION['connected']) {?>
+  <div class="alert alert-success" role="alert">
+    Hello <?php echo strval($_COOKIE['username']);?>
+  </div>
+<?php }?>
 
 <!-- Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
