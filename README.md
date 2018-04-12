@@ -15,3 +15,5 @@ then setup your apache
 Database design provided in the ```sql-diagramme.png```
 
 UI screen shot provided in ```gui-screenshots``` folder
+
+This application has been deployed on (https://1106401-php.azurewebsites.net/)
