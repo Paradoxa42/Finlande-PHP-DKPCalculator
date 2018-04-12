@@ -136,7 +136,7 @@ if (!$this->database_manager) {
     
     /* Get all activites that a character has done */
     function getActivityCharacterList($id_character) {
-        $query = "SELECT activityModel.name, activityModel.dkpEarn, activity.dateTime from activity, activityModel WHERE activity.idCharacter = " . strval($id_character)." AND activity.idActivity = activityModel.id";
+        $query = "SELECT activity.id, activityModel.name, activityModel.dkpEarn, activity.dateTime from activity, activityModel WHERE activity.idCharacter = " . strval($id_character)." AND activity.idActivity = activityModel.id";
         $item = mysqli_query($this->database_manager, $query);
         return $this->result_to_array($item);
     }

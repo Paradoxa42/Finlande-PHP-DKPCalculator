@@ -31,6 +31,9 @@ session_start();
               <th scope="col">Name</th>
               <th scope="col">DKPoint</th>
               <th scope="col">Date</th>
+              <?php if ($_SESSION['connected'] == true) {?>
+              <th scope="col">Delete</th>
+              <?php }?>
             </tr>
           </thead>
           <tbody>
@@ -42,6 +45,14 @@ session_start();
                   <td><?php echo $item["name"] ?></td>
                   <td><?php echo $item["dkpEarn"]?></td>
                   <td><?php echo $item["dateTime"]?></td>
+                  <?php if ($_SESSION['connected'] == true) {?>
+                    <td>
+                      <form method="post" action="character.php?id=<?php echo $_GET['id']?>">
+                        <input type="hidden" value="<?php echo $item["id"]?>" name="deleteActivityCharacter">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </td>
+                  <?php }?>
                 </tr>
             <?php
               }

@@ -20,6 +20,9 @@
             <th scope="col">#</th>
             <th scope="col">Action</th>
             <th scope="col">DKPoint earning</th>
+            <?php if ($_SESSION['connected'] == true) {?>
+              <th scope="col">Delete</th>
+            <?php }?>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +35,14 @@
               <th scope="row"><?php echo strval($i++);?></th>
               <td><?php echo $item['name'];?></td>
               <td><?php echo $item['dkpEarn'];?></td>
+              <?php if ($_SESSION['connected'] == true) {?>
+                    <td>
+                      <form method="post">
+                        <input type="hidden" value="<?php echo $item["id"]?>" name="deleteActivity">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </td>
+                <?php }?>
             </tr>
           <?php    
           }
