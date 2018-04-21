@@ -56,10 +56,6 @@ class validanitizor {
             $this->print_error_message("Error String ".$inputName." is empty");
             return false;
         }
-        /*if (!filter_var($string,FILTER_STRING)) {
-            $this->print_error_message("Error in validation String ".$inputName." is invalide");
-            return false;
-        }*/
         return true;
     }
 }

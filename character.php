@@ -22,7 +22,12 @@ session_start();
         $activityModels = $databaseManager->getActivityList();
         $i = 0;
       ?>
-                <h2><?php echo $character["name"] ?></h2>
+                <h2>
+                  <form method="post">
+                    <input type="text" value="<?php echo $character["name"] ?>" name="putNameCharacter">
+                    <button type="submit" class="btn btn-success">Rename Character</button>
+                  </form>
+                </h2>
                 <h3>Month : <?php echo $score["month"]?></h3>
                 <h3>Total : <?php echo $score["total"]?></h3>
         <table class="table">
@@ -43,13 +48,15 @@ session_start();
                 ?>
                 <tr>
                   <th scope="row"><?php echo strval($i++);?></th>
-                  <td><?php echo $item["name"] ?></td>
+                  <td><form><?php echo $item["name"] ?></td>
                   <td><?php echo $item["dkpEarn"]?></td>
                   <td><?php echo $item["dateTime"]?></td>
                   <?php if ($_SESSION['connected'] == true) {?>
                     <td>
-                      <form method="post" action="character.php?id=<?php echo $_GET['id']?>">
+                    <?php echo $_GET['id']?>
+                      <form method="post" action="character.php">
                         <input type="hidden" value="<?php echo $item["id"]?>" name="deleteActivityCharacter">
+                        <input type="hidden" value="<?php echo $_GET["id"]?>" name="id">
                         <button type="submit" class="btn btn-danger">Delete</button>
                       </form>
                     </td>
@@ -68,7 +75,7 @@ session_start();
                           foreach ($activityModels as $item) {
                             ?><option value="<?php echo $item['id']?>"><?php echo $item['name'] ?></option><?php
                           }
-                        ?>
+                          ?>
                       </select>
                       </th>
                     <td><button type="submit" class="btn btn-primary">Add Activity</button></td>
